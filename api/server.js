@@ -1,5 +1,4 @@
 require("dotenv").config();
-const serverless = require("serverless-http");
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -38,6 +37,26 @@ app.use("/api/ai", aiRoutes);
 //serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "../uploads"), {}));
 
-// Export as Vercel serverless handler
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    message: "API is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: "Something went wrong!",
+    error: process.env.NODE_ENV === "production" ? {} : err.message,
+  });
+});
+
+// 404 handler
+app.use("*", (req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
 module.exports = app;
-module.exports.handler = serverless(app);
