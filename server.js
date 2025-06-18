@@ -2,17 +2,17 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const connectDB = require("../config/db");
+const connectDB = require("./config/db");
 
-const authRoutes = require("../routes/authRoutes");
-const blogPostRoutes = require("../routes/blogPostRoutes");
-const commentRoutes = require("../routes/commentRoutes");
-const dashboardRoutes = require("../routes/dashboardRoutes");
-const aiRoutes = require("../routes/aiRoutes");
+const authRoutes = require("./routes/authRoutes");
+const blogPostRoutes = require("./routes/blogPostRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
-//middleware to handle CORS
+// Middleware to handle CORS
 app.use(
   cors({
     origin: "*",
@@ -21,21 +21,21 @@ app.use(
   })
 );
 
-//Connet Database
+// Connect Database
 connectDB();
 
-//middleware
+// Middleware
 app.use(express.json());
 
-//Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", blogPostRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/dashboard-summary", dashboardRoutes);
 app.use("/api/ai", aiRoutes);
 
-//serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "../uploads"), {}));
+// Serve uploads folder - PATH DIUBAH
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -58,5 +58,11 @@ app.use((err, req, res, next) => {
 app.use("*", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
+
+// Tambahan untuk local development
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
 
 module.exports = app;
