@@ -3,13 +3,13 @@ const serverless = require("serverless-http");
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const connectDB = require("./config/db");
+const connectDB = require("../config/db");
 
-const authRoutes = require("./routes/authRoutes");
-const blogPostRoutes = require("./routes/blogPostRoutes");
-const commentRoutes = require("./routes/commentRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
-const aiRoutes = require("./routes/aiRoutes");
+const authRoutes = require("../routes/authRoutes");
+const blogPostRoutes = require("../routes/blogPostRoutes");
+const commentRoutes = require("../routes/commentRoutes");
+const dashboardRoutes = require("../routes/dashboardRoutes");
+const aiRoutes = require("../routes/aiRoutes");
 
 const app = express();
 
@@ -36,7 +36,7 @@ app.use("/api/dashboard-summary", dashboardRoutes);
 app.use("/api/ai", aiRoutes);
 
 //serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads"), {}));
 
 // Export as Vercel serverless handler
 module.exports = app;
