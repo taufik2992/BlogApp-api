@@ -37,32 +37,35 @@ app.use("/api/ai", aiRoutes);
 // Serve uploads folder - PATH DIUBAH
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Health check endpoint
-app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    message: "API is running",
-    timestamp: new Date().toISOString(),
-  });
-});
+// // Health check endpoint
+// app.get("/api/health", (req, res) => {
+//   res.status(200).json({
+//     message: "API is running",
+//     timestamp: new Date().toISOString(),
+//   });
+// });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: "Something went wrong!",
-    error: process.env.NODE_ENV === "production" ? {} : err.message,
-  });
-});
+// // Error handling middleware
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).json({
+//     message: "Something went wrong!",
+//     error: process.env.NODE_ENV === "production" ? {} : err.message,
+//   });
+// });
 
-// 404 handler
-app.use("*", (req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
+// // 404 handler
+// app.use("*", (req, res) => {
+//   res.status(404).json({ message: "Route not found" });
+// });
 
-// Tambahan untuk local development
-if (require.main === module) {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
+// // Tambahan untuk local development
+// if (require.main === module) {
+//   const PORT = process.env.PORT || 5000;
+//   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// }
 
-module.exports = app;
+// module.exports = app;
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

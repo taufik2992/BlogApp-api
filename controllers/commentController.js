@@ -37,26 +37,22 @@ const addComment = async (req, res) => {
 //@access Public
 const getAllComments = async (req, res) => {
   try {
-    //Fetch all comment with author populated
+    // Fetch all comments with author populated
     const comments = await Comment.find()
       .populate("author", "name profileImageUrl")
       .populate("post", "title coverImageUrl")
-      .sort({
-        createdAt: -1,
-      }); // Opsional,so replies come in order
+      .sort({ createdAt: 1 });
 
-    // create a map for commentId -> comment object
+    // Create a map for commentId -> comment object
     const commentMap = {};
-
     comments.forEach((comment) => {
-      comment = comment.toObject(); // convert from mongoose document to plain object
-      comment.replies = []; // Initialize replies array
+      comment = comment.toObject();
+      comment.replies = [];
       commentMap[comment._id] = comment;
     });
 
-    //Nest replies under their parentComment
+    // Nest replies under their parentComment
     const nestedComments = [];
-
     comments.forEach((comment) => {
       if (comment.parentComment) {
         const parent = commentMap[comment.parentComment];
@@ -66,12 +62,14 @@ const getAllComments = async (req, res) => {
       } else {
         nestedComments.push(commentMap[comment._id]);
       }
-      res.json(nestedComments);
     });
+
+    // Send response after processing all comments
+    res.json(nestedComments);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to fetch all comment", error: error.message });
+      .json({ message: "Failed to fetch all comments", error: error.message });
   }
 };
 
@@ -84,20 +82,18 @@ const getCommentsByPost = async (req, res) => {
     const comments = await Comment.find({ post: postId })
       .populate("author", "name profileImageUrl")
       .populate("post", "title coverImageUrl")
-      .sort({ createdAt: -1 }); //optional,so replies come in order
+      .sort({ createdAt: -1 });
 
-    //create a map for commentId -> comment object
+    // Create a map for commentId -> comment object
     const commentMap = {};
-
     comments.forEach((comment) => {
-      comment = comment.toObject(); //convert from mongoose document to plain object
-      comment.replies = []; //initialize replies array
+      comment = comment.toObject();
+      comment.replies = [];
       commentMap[comment._id] = comment;
     });
 
-    //Nest replies under their parentComment
+    // Nest replies under their parentComment
     const nestedComments = [];
-
     comments.forEach((comment) => {
       if (comment.parentComment) {
         const parent = commentMap[comment.parentComment];
@@ -107,15 +103,16 @@ const getCommentsByPost = async (req, res) => {
       } else {
         nestedComments.push(commentMap[comment._id]);
       }
-      res.json(nestedComments);
     });
+
+    // Send response after processing all comments
+    res.json(nestedComments);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to comments", error: error.message });
+      .json({ message: "Failed to fetch comments", error: error.message });
   }
 };
-
 //@desc Delete a comment and its replies(author or admin only)
 //@route Delete /api/comments/:commentId
 //@access Private
